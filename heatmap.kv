@@ -1,0 +1,54 @@
+#:kivy 1.8.0
+
+<myApplication>:
+    input_scale: input_scale
+    button_continue: button_continue
+
+    canvas:
+        Color:
+            rgba: 1, 1, 1, 1
+
+        Rectangle: 
+            size: self.size
+            pos: self.pos
+
+    GridLayout:
+        cols: 1
+        size: root.width, root.height
+        pos: root.width / 1.25, 0
+
+        GridLayout:
+            cols: 1
+            Label:
+                text: "1ST STEP: draw the\narea under analysis and\npress CONTINUE once\ndone."
+                text_size: self.size
+                halign: 'left'
+                valign: 'middle'
+                color: 0, 0, 0 ,1
+
+            Label:
+                text: "2ND STEP: select one\nline from the draw\nand enter its measure\nin meters. Select\nCONTINUE afterwards."
+                text_size: self.size
+                halign: 'left'
+                valign: 'middle'
+                color: 0, 0, 0, 1
+
+            TextInput:
+                id: input_scale
+                multiline: False
+
+            Label:
+                text: "3RD STEP: walk\nthrough the area\npressing the location\nin the draw. Press\nCONTINUE to finish."
+                text_size: self.size
+                halign: 'left'
+                valign: 'middle'
+                color: 0, 0, 0, 1
+
+            Button:
+                id: button_continue
+                text: "CONTINUE"
+                text_size: self.size
+                font_size: 65
+                halign: 'left'
+                valign: 'middle'
+                on_press: root.btn_clk()
