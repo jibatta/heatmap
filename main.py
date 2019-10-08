@@ -5,31 +5,26 @@ from kivy.input.shape import ShapeRect
 from kivy.graphics import Ellipse, Line, Color
 from utils import log
 
-class MyButton(Button):
-    def on_touch_up(self, touch):
-        super(MyButton, self).on_touch_up(touch)
-        if self.collide_point(*touch.pos):
-            self._do_release()
-            self.dispatch('on_release')
 
 class myApplication(Widget):
     def __init__(self, **kwargs):
         super(myApplication, self).__init__(**kwargs)
         self.point_list_figure = []
         self.mode = 'first_step'
-        log('heatmap','INFO',"First step.")
+        log('heatmap','INFO',"First step: draw area.")
 
-            
+
     def on_touch_down(self, touch):
         if self.mode is 'first_step'  and touch.x < self.width / 1.25:
             self.line_start_point_x, self.line_start_point_y = touch.pos
-        elif self.mode is 'second_step':
-            print("Second step.")
+        # elif self.mode is 'second_step' and inputlabel opened:
+            # I should open virtual keyboard here.
         elif self.mode == 'third_step' and touch.is_double_tap:
             with self.canvas:
                 Color(1, 0, 1) 
                 Ellipse(pos=(touch.x, touch.y), size=(15,15))
                 log('heatmap','INFO',"New measure.")
+                # Measure wifi signal here and store in database.
         else:
             return super(myApplication, self).on_touch_down(touch)
 
@@ -46,18 +41,22 @@ class myApplication(Widget):
         else:
             return super(myApplication, self).on_touch_down(touch)
 
-    def btn_clk(self):
+    def button_check(self):
         if self.mode is 'first_step':
             self.mode = 'second_step'
-            log('heatmap','INFO',"Second step.")
+            log('heatmap','INFO',"Second step: Select scale.")
         elif self.mode is 'second_step':
             self.mode = 'third_step'
-            log('heatmap','INFO',"Third step.")
+            self.scale = self.ids.input_scale.text
+            log('heatmap','INFO',"The scale is: {}.".format(self.scale))
+            log('heatmap','INFO',"Third step: measure wifi signal.")
         elif self.mode is 'third_step':
             self.mode = 'fourth_step'
-            log('heatmap','INFO',"Fourth step.")
+            # Get measures from database here and load heatmap results.
+            log('heatmap','INFO',"Fourth step: printing results.")
         elif self.mode is 'fourth_step':
-            log('heatmap','INFO',"Application finished!")
+            log('heatmap','INFO',"Closing application - Bye!")
+            App.get_running_app().stop()
 
 class heatmap(App):
     def build(self):

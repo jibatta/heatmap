@@ -2,7 +2,6 @@
 
 <myApplication>:
     input_scale: input_scale
-    button_continue: button_continue
 
     canvas:
         Color:
@@ -38,7 +37,7 @@
                 multiline: False
 
             Label:
-                text: "3RD STEP: walk\nthrough the area\npressing the location\nin the draw. Press\nCONTINUE to finish."
+                text: "3RD STEP: walk\nthrough the area\npressing the location\nin the draw. Press\nCONTINUE to view results."
                 text_size: self.size
                 halign: 'left'
                 valign: 'middle'
@@ -51,4 +50,4 @@
                 font_size: 65
                 halign: 'left'
                 valign: 'middle'
-                on_press: root.btn_clk()
+                on_press: root.button_check()
