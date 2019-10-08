@@ -23,6 +23,8 @@ class myApplication(Widget):
     def on_touch_down(self, touch):
         if self.mode is 'first_step'  and touch.x < self.width / 1.25:
             self.line_start_point_x, self.line_start_point_y = touch.pos
+        elif self.mode is 'second_step':
+            print("Second step.")
         elif self.mode == 'third_step' and touch.is_double_tap:
             with self.canvas:
                 Color(1, 0, 1) 
