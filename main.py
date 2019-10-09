@@ -1,7 +1,6 @@
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
-from kivy.input.shape import ShapeRect
 from kivy.graphics import Ellipse, Line, Color
 from utils import log
 
@@ -13,11 +12,12 @@ class myApplication(Widget):
         self.mode = 'first_step'
         log('heatmap','INFO',"First step: draw area.")
 
-
     def on_touch_down(self, touch):
         if self.mode is 'first_step'  and touch.x < self.width / 1.25:
             self.line_start_point_x, self.line_start_point_y = touch.pos
-        # elif self.mode is 'second_step' and inputlabel opened:
+        # elif self.mode is 'second_step':
+            # I should select one line from the draw and get its initial and final point to set scale
+            # if inputlabel opened:
             # I should open virtual keyboard here.
         elif self.mode == 'third_step' and touch.is_double_tap:
             with self.canvas:
@@ -41,7 +41,7 @@ class myApplication(Widget):
         else:
             return super(myApplication, self).on_touch_down(touch)
 
-    def button_check(self):
+    def check_button(self):
         if self.mode is 'first_step':
             self.mode = 'second_step'
             log('heatmap','INFO',"Second step: Select scale.")
