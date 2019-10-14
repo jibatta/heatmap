@@ -34,7 +34,9 @@
 
             TextInput:
                 id: input_scale
+                hint_text: 'Use keyboard and press ENTER.'
                 multiline: False
+                on_text_validate: root.search_location()
 
             Label:
                 text: "3RD STEP: walk\nthrough the area\npressing the location\nin the draw. Press\nCONTINUE to view results."
