@@ -6,6 +6,7 @@ from kivy.uix.button import Button
 from kivy.uix.behaviors import DragBehavior
 from kivy.uix.vkeyboard import VKeyboard
 from utils import log, pdf_generator
+from measure import get_measure
 
 
 class myApplication(Widget):
@@ -25,7 +26,7 @@ class myApplication(Widget):
                 Color(1, 0, 1) 
                 Ellipse(pos=(touch.x, touch.y), size=(15,15))
                 log('heatmap','INFO',"New measure.")
-                # Measure wifi signal here and store in database.
+                get_measure(model='MacOS')
         else:
             return super(myApplication, self).on_touch_down(touch)
 
@@ -47,6 +48,7 @@ class myApplication(Widget):
             self.mode = 'second_step'
             log('heatmap','INFO',"Second step: Select scale.")
             self.add_widget(self.my_vkeyboard)
+            
         elif self.mode is 'second_step':
             self.mode = 'third_step'
             log('heatmap','INFO',"The scale is: {}.".format(self.scale))
