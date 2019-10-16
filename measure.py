@@ -8,8 +8,7 @@ def get_measure(model):
         measure = subprocess.run(['airport', '-s'], stdout=subprocess.PIPE)
     else:
         log('heatmap','ERROR','System not recognized.')
-    measure_list = bash_to_list(measure.stdout.decode('utf-8'))
-    print(measure_list)
+    return bash_to_list(measure.stdout.decode('utf-8'))
 
 def bash_to_list(measure):
     measure_list = []

@@ -7,6 +7,7 @@ from kivy.uix.behaviors import DragBehavior
 from kivy.uix.vkeyboard import VKeyboard
 from utils import log, pdf_generator
 from measure import get_measure
+from db_functions import save_in_sqlite
 
 
 class myApplication(Widget):
@@ -26,7 +27,8 @@ class myApplication(Widget):
                 Color(1, 0, 1) 
                 Ellipse(pos=(touch.x, touch.y), size=(15,15))
                 log('heatmap','INFO',"New measure.")
-                get_measure(model='MacOS')
+                measure_list = get_measure(model='MacOS')
+                save_in_sqlite(measure_list)
         else:
             return super(myApplication, self).on_touch_down(touch)
 
