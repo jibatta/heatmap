@@ -5,14 +5,24 @@ from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.uix.behaviors import DragBehavior
 from kivy.uix.vkeyboard import VKeyboard
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
 from utils import log, pdf_generator
 from measure import get_measure
-from db_functions import save_in_sqlite
+from db_functions import save_measure
+from db_class import Base, Point, Bssid, Channel, Measure, Ssid, Security
 
+# relative path with triple dash, full path with cuadruple dash
+db_path = 'sqlite:///heatmap.db'
 
 class myApplication(Widget):
     def __init__(self, **kwargs):
         super(myApplication, self).__init__(**kwargs)
+
+        self.engine = create_engine(db_path, echo=True)
+        self.engine.execute('PRAGMA foreign_keys = ON')
+        Base.metadata.create_all(self.engine)
+
         self.my_vkeyboard = VKeyboard()
         self.point_list_figure = []
         self.mode = 'first_step'
@@ -28,7 +38,7 @@ class myApplication(Widget):
                 Ellipse(pos=(touch.x, touch.y), size=(15,15))
                 log('heatmap','INFO',"New measure.")
                 measure_list = get_measure(model='MacOS')
-                save_in_sqlite(measure_list)
+                save_measure(db=self.engine, data=measure_list)
         else:
             return super(myApplication, self).on_touch_down(touch)
 
