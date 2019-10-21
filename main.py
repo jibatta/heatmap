@@ -7,10 +7,11 @@ from kivy.uix.behaviors import DragBehavior
 from kivy.uix.vkeyboard import VKeyboard
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 from utils import log, pdf_generator
 from measure import get_measure
-from db_functions import save_measure
-from db_class import Base, Point, Bssid, Channel, Measure, Ssid, Security
+from db_functions import create_measure
+from models import Base, Point, Bssid, Channel, Measure, Ssid, Security
 
 # relative path with triple dash, full path with cuadruple dash
 db_path = 'sqlite:///heatmap.db'
@@ -22,6 +23,8 @@ class myApplication(Widget):
         self.engine = create_engine(db_path, echo=True)
         self.engine.execute('PRAGMA foreign_keys = ON')
         Base.metadata.create_all(self.engine)
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
 
         self.my_vkeyboard = VKeyboard()
         self.point_list_figure = []
@@ -38,7 +41,7 @@ class myApplication(Widget):
                 Ellipse(pos=(touch.x, touch.y), size=(15,15))
                 log('heatmap','INFO',"New measure.")
                 measure_list = get_measure(model='MacOS')
-                save_measure(db=self.engine, data=measure_list)
+                create_measure(session=self.session, data=measure_list)
         else:
             return super(myApplication, self).on_touch_down(touch)
 
@@ -72,6 +75,7 @@ class myApplication(Widget):
             log('heatmap','INFO',"Fourth step: generating PDF report.")
         elif self.mode is 'fourth_step':
             log('heatmap','INFO',"Closing application - Bye!")
+            self.session.close()
             App.get_running_app().stop()
 
     def search_location(self):
