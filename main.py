@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from utils import log, pdf_generator
 from measure import get_measure
-from db_functions import create_measure
+from db_functions import create_measure, create_point
 from models import Base, Point, Bssid, Channel, Measure, Ssid, Security
 
 # relative path with triple dash, full path with cuadruple dash
@@ -41,6 +41,7 @@ class myApplication(Widget):
                 Ellipse(pos=(touch.x, touch.y), size=(15,15))
                 log('heatmap','INFO',"New measure.")
                 measure_list = get_measure(model='MacOS')
+                create_point(session=self.session, point=touch)
                 create_measure(session=self.session, data=measure_list)
         else:
             return super(myApplication, self).on_touch_down(touch)

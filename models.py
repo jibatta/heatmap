@@ -15,9 +15,9 @@ class Point(Base):
     def __repr__(self):
         return "point {} - {}".format(self.x_location,self.y_location)
 
-    def __init__(self, x_location, y_location):
-        self.x_location = x_location
-        self.y_location = y_location
+    def __init__(self, point):
+        self.x_location = point.x
+        self.y_location = point.y
 
 
 class Ssid(Base):
