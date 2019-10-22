@@ -26,5 +26,6 @@ def bash_to_list(measure):
         else:
             del wifi_measure_element[-3:-1]
         measure_list.append(wifi_measure_element)
+    # Error here..
     del measure_list[0]
     return measure_list
