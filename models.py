@@ -10,7 +10,7 @@ class Point(Base):
     id = Column(Integer, primary_key = True)
     x_location = Column(Integer)
     y_location = Column(Integer)
-    measure = relationship('Measure', backref='point')
+    measure = relationship('Measure')
 
     def __repr__(self):
         return "point {} - {}".format(self.x_location,self.y_location)
@@ -24,7 +24,7 @@ class Ssid(Base):
     __tablename__ = 'ssid'
     id = Column(Integer, primary_key = True)
     ssid = Column(String)
-    measure = relationship('Measure', backref='ssid')
+    measure = relationship('Measure')
 
     def __repr__(self):
         return "ssid {}".format(self.ssid)
@@ -37,7 +37,7 @@ class Channel(Base):
     __tablename__ = 'channel'
     id = Column(Integer, primary_key = True)
     channel = Column(String)
-    measure = relationship('Measure', backref='channel')
+    measure = relationship('Measure')
 
     def __repr__(self):
         return "channel {}".format(self.channel)
@@ -50,7 +50,7 @@ class Bssid(Base):
     __tablename__ = 'bssid'
     id = Column(Integer, primary_key = True)
     bssid = Column(String)
-    measure = relationship('Measure', backref='bssid')
+    measure = relationship('Measure')
 
     def __repr__(self):
         return "bssid {}".format(self.bssid)
@@ -63,7 +63,7 @@ class Security(Base):
     __tablename__ = 'security'
     id = Column(Integer, primary_key = True)
     security_type = Column(String)
-    measure = relationship('Measure', backref='security')
+    measure = relationship('Measure')
 
     def __repr__(self):
         return "security {}".format(self.security_type)
@@ -80,6 +80,7 @@ class Measure(Base):
     channel_id = Column(Integer, ForeignKey('channel.id'))
     bssid_id = Column(Integer, ForeignKey('bssid.id'))
     security_id = Column(Integer, ForeignKey('security.id'))
+
     rssi = Column(String)
 
     def __repr__(self):

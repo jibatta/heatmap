@@ -3,20 +3,44 @@ from models import Point, Channel, Security, Ssid, Measure, Bssid
 def create_measure(session, data):
     objects = []
     value = data.pop(0)
-    # Somehow I should send foreign keys to measure
-    objects.append(Measure(value[2]))
+    
+    my_ssid = Ssid(value[0])
+    my_bssid = Bssid(value[1])
+    my_measure = Measure(value[2])
+    my_channel = Channel(value[3])
+    my_security = Security(value[4])
+    #objects.append(Measure(value[2]))
+    
     entry = session.query(Ssid).filter(Ssid.ssid.like(value[0])).first()
     if entry is None:
-        objects.append(Ssid(value[0]))
+        my_ssid.measure.append(my_measure)
+        objects.append(my_ssid)
+    else:
+        entry.measure.append(my_measure)
+
     entry = session.query(Bssid).filter(Bssid.bssid.like(value[1])).first()
     if entry is None:
-        objects.append(Bssid(value[1]))
+        my_bssid.measure.append(my_measure)
+        objects.append(my_bssid)
+    else:
+        entry.measure.append(my_measure)
+
     entry = session.query(Channel).filter(Channel.channel.like(value[3])).first()
     if entry is None:
-        objects.append(Channel(value[3]))
+        my_channel.measure.append(my_measure)
+        objects.append(my_channel)
+    else:
+        entry.measure.append(my_measure)
+
     entry = session.query(Security).filter(Security.security_type.like(value[4])).first()
     if entry is None:
-        objects.append(Security(value[4]))
+        my_security.measure.append(my_measure)
+        objects.append(my_security)
+    else:
+        entry.measure.append(my_measure)
+    
+    objects.append(my_measure)
+
     session.add_all(objects)
     session.commit()
     if len(data) != 0:
