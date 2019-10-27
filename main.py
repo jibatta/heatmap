@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from utils import log, pdf_generator
 from measure import get_measure
-from db_functions import create_measure, create_point
+from db_functions import save_measure_in_db
 from models import Base, Point, Bssid, Channel, Measure, Ssid, Security
 
 # relative path with triple dash, full path with cuadruple dash
@@ -41,8 +41,7 @@ class myApplication(Widget):
                 Ellipse(pos=(touch.x, touch.y), size=(15,15))
                 log('heatmap','INFO',"New measure.")
                 measure_list = get_measure(model='MacOS')
-                create_point(session=self.session, point=touch)
-                create_measure(session=self.session, data=measure_list)
+                save_measure_in_db(session=self.session, data=measure_list, point=touch)
         else:
             return super(myApplication, self).on_touch_down(touch)
 
@@ -71,7 +70,7 @@ class myApplication(Widget):
             log('heatmap','INFO',"Third step: measure wifi signal.")
             self.remove_widget(self.my_vkeyboard)
         elif self.mode is 'third_step':
-            pdf_generator()
+            pdf_generator(session=self.session)
             self.mode = 'fourth_step'
             log('heatmap','INFO',"Fourth step: generating PDF report.")
         elif self.mode is 'fourth_step':

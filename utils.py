@@ -2,11 +2,12 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, PageBreak
 from reportlab.lib.units import mm, inch
 from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
+from models import Ssid, Bssid, Measure, Security, Channel, Point
 
 def log(application, log_level, msg):
     print("[{}] - [{}] - {}".format(application, log_level, msg))
 
-def pdf_generator():
+def pdf_generator(session):
     # This should be the results of the measures - Hardcoded temporarily.
     ssid_list = ['UTN BA']
 
@@ -27,7 +28,9 @@ def pdf_generator():
     pdf_buffer.append(PageBreak())
 
     # This would be inside a for loop.
-    for ssid in ssid_list:
+
+
+    for ssid in session.query(Ssid).filter(Ssid.id == Measure.ssid_id).all():
         paragraph_measure = Paragraph('SSID: {}'.format(ssid), pdf_style_sheet['Heading2'])
         pdf_buffer.append(paragraph_measure)
         # I would insert here the image.

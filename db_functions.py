@@ -1,6 +1,6 @@
 from models import Point, Channel, Security, Ssid, Measure, Bssid
 
-def create_measure(session, data):
+def save_measure_in_db(session, data, point):
     objects = []
     value = data.pop(0)
     
@@ -9,7 +9,7 @@ def create_measure(session, data):
     my_measure = Measure(value[2])
     my_channel = Channel(value[3])
     my_security = Security(value[4])
-    #objects.append(Measure(value[2]))
+    my_point = Point(point)
     
     entry = session.query(Ssid).filter(Ssid.ssid.like(value[0])).first()
     if entry is None:
@@ -39,19 +39,18 @@ def create_measure(session, data):
     else:
         entry.measure.append(my_measure)
     
+    entry = session.query(Point).filter(Point.x_location==point.x).filter(Point.y_location==point.y).first()
+    if entry is None:
+        my_point.measure.append(my_measure)
+        objects.append(my_point)
+    else:
+        entry.measure.append(my_measure)
+
     objects.append(my_measure)
 
     session.add_all(objects)
     session.commit()
     if len(data) != 0:
-        create_measure(session, data)
-    else:
-        return
-
-def create_point(session, point):
-    entry = session.query(Point).filter(Point.x_location.like(point.x)).filter(Point.y_location.like(point.y)).first()
-    if entry is None:
-        session.add(Point(point))
-        session.commit()
+        save_measure_in_db(session, data, point)
     else:
         return
