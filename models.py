@@ -4,6 +4,18 @@ from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
+class Draw_Point(Base):
+    __tablename__ = 'draw'
+    id = Column(Integer, primary_key = True)
+    x_location = Column(Integer)
+    y_location = Column(Integer)
+    
+    def __repr__(self):
+        return (self.x_location, self.y_location)
+
+    def __init__(self, point):
+        self.x_location = point.x
+        self.y_location = point.y
 
 class Point(Base):
     __tablename__ = 'point'
@@ -13,7 +25,7 @@ class Point(Base):
     measure = relationship('Measure')
 
     def __repr__(self):
-        return "point {} - {}".format(self.x_location,self.y_location)
+        return "{} - {}".format(self.x_location,self.y_location)
 
     def __init__(self, point):
         self.x_location = point.x
@@ -23,40 +35,40 @@ class Point(Base):
 class Ssid(Base):
     __tablename__ = 'ssid'
     id = Column(Integer, primary_key = True)
-    ssid = Column(String)
+    ssid_value = Column(String)
     measure = relationship('Measure')
 
     def __repr__(self):
-        return "ssid {}".format(self.ssid)
+        return "{}".format(self.ssid_value)
 
     def __init__(self, ssid):
-        self.ssid = ssid
+        self.ssid_value = ssid
 
 
 class Channel(Base):
     __tablename__ = 'channel'
     id = Column(Integer, primary_key = True)
-    channel = Column(String)
+    channel_number = Column(String)
     measure = relationship('Measure')
 
     def __repr__(self):
-        return "channel {}".format(self.channel)
+        return "{}".format(self.channel_number)
 
     def __init__(self, channel):
-        self.channel = channel
+        self.channel_number = channel
 
 
 class Bssid(Base):
     __tablename__ = 'bssid'
     id = Column(Integer, primary_key = True)
-    bssid = Column(String)
+    bssid_value = Column(String)
     measure = relationship('Measure')
 
     def __repr__(self):
-        return "bssid {}".format(self.bssid)
+        return "{}".format(self.bssid_value)
 
     def __init__(self, bssid):
-        self.bssid = bssid
+        self.bssid_value = bssid
 
 
 class Security(Base):
@@ -66,7 +78,7 @@ class Security(Base):
     measure = relationship('Measure')
 
     def __repr__(self):
-        return "security {}".format(self.security_type)
+        return "{}".format(self.security_type)
     
     def __init__(self, security_type):
         self.security_type = security_type
@@ -84,7 +96,7 @@ class Measure(Base):
     rssi = Column(String)
 
     def __repr__(self):
-        return "rssi {}".format(self.rssi)
+        return "{}".format(self.rssi)
 
     def __init__(self, rssi):
         self.rssi = rssi

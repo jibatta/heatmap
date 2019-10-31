@@ -1,4 +1,4 @@
-from models import Point, Channel, Security, Ssid, Measure, Bssid
+from models import Point, Channel, Security, Ssid, Measure, Bssid, Draw_Point
 
 def save_measure_in_db(session, data, point):
     objects = []
@@ -11,21 +11,21 @@ def save_measure_in_db(session, data, point):
     my_security = Security(value[4])
     my_point = Point(point)
     
-    entry = session.query(Ssid).filter(Ssid.ssid.like(value[0])).first()
+    entry = session.query(Ssid).filter(Ssid.ssid_value.like(value[0])).first()
     if entry is None:
         my_ssid.measure.append(my_measure)
         objects.append(my_ssid)
     else:
         entry.measure.append(my_measure)
 
-    entry = session.query(Bssid).filter(Bssid.bssid.like(value[1])).first()
+    entry = session.query(Bssid).filter(Bssid.bssid_value.like(value[1])).first()
     if entry is None:
         my_bssid.measure.append(my_measure)
         objects.append(my_bssid)
     else:
         entry.measure.append(my_measure)
 
-    entry = session.query(Channel).filter(Channel.channel.like(value[3])).first()
+    entry = session.query(Channel).filter(Channel.channel_number.like(value[3])).first()
     if entry is None:
         my_channel.measure.append(my_measure)
         objects.append(my_channel)
@@ -54,3 +54,10 @@ def save_measure_in_db(session, data, point):
         save_measure_in_db(session, data, point)
     else:
         return
+
+
+def save_draw_point_in_db(session, point):
+
+    my_draw_point = Draw_Point(point)
+    session.add(my_draw_point)
+    session.commit()

@@ -10,11 +10,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from utils import log, pdf_generator
 from measure import get_measure
-from db_functions import save_measure_in_db
+from db_functions import save_measure_in_db, save_draw_point_in_db
 from models import Base, Point, Bssid, Channel, Measure, Ssid, Security
 
 # relative path with triple dash, full path with cuadruple dash
-db_path = 'sqlite:///heatmap.db'
+#db_path = 'sqlite:///heatmap.db'
+db_path = 'sqlite:///'
 
 class myApplication(Widget):
     def __init__(self, **kwargs):
@@ -34,7 +35,7 @@ class myApplication(Widget):
     def on_touch_down(self, touch):
         if self.mode is 'second_step' and touch.x < self.width / 1.25 and touch.y > self.height / 4:
             print(self.point_list_figure) 
-            # I should select one line from the draw and get its initial and final point to set scale
+        
         elif self.mode == 'third_step' and touch.is_double_tap:
             with self.canvas:
                 Color(1, 0, 1) 
@@ -55,6 +56,7 @@ class myApplication(Widget):
                 point_list = [touch.x, touch.y]
                 self.point_list_figure.append(point_list)
                 Line(points=self.point_list_figure, width = 5)
+                save_draw_point_in_db(self.session, touch)
         else:
             return super(myApplication, self).on_touch_down(touch)
 
