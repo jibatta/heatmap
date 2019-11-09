@@ -11,7 +11,7 @@ class Draw_Point(Base):
     y_location = Column(Integer)
     
     def __repr__(self):
-        return (self.x_location, self.y_location)
+        return self.x_location, self.y_location
 
     def __init__(self, point):
         self.x_location = point.x

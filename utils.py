@@ -1,12 +1,18 @@
 import pyscreenshot as ImageGrab
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import csv
 from reportlab.platypus import SimpleDocTemplate, Paragraph, PageBreak
 from reportlab.lib.units import mm, inch
 from reportlab.lib.styles import getSampleStyleSheet
 from sqlalchemy import distinct
 from models import Ssid, Bssid, Measure, Security, Channel, Point, Draw_Point
 
+
 def log(application, log_level, msg):
     print("[{}] - [{}] - {}".format(application, log_level, msg))
+
 
 def pdf_generator(session):
     pdf_buffer = []
@@ -24,7 +30,7 @@ def pdf_generator(session):
     pdf_buffer.append(paragraph_4)
     pdf_buffer.append(PageBreak())
 
-    take_screenshot(session)
+    #take_screenshot(session)
 
     for ssid in session.query(Ssid).filter(Ssid.id==Measure.ssid_id).order_by(Ssid.ssid_value).all():
         paragraph_measure = Paragraph('SSID: {}'.format(ssid), pdf_style_sheet['Heading2'])
@@ -70,10 +76,6 @@ def add_page_number(canvas, doc):
      canvas.restoreState()
 
 
-def plot_heatmap(query):
-    pass
-
-
 def remove_repeated_values(query_list):
     my_list = []
     for my_query in query_list:
@@ -85,15 +87,29 @@ def remove_repeated_values(query_list):
 
 def define_screen_window_size(session):
     query = session.query(Draw_Point.x_location).order_by(Draw_Point.x_location).all()
-    x_min, x_max = query[0], query[-1]
+    x_min, x_max = int(query[0][0]), int(query[-1][0])
     query = session.query(Draw_Point.y_location).order_by(Draw_Point.y_location).all()
-    y_min, y_max = query[0], query[-1]
-    return (x_min, y_min, x_max, y_max)
+    y_min, y_max = int(query[0][0]), int(query[-1][0])
+    #return (x_min, 1800-y_max, x_max-1130, 1800-y_min)
+    return (x_min-120, y_min-400, x_max-1000, 800)
 
 
 def take_screenshot(session):
-    im = ImageGrab.grab()
+    #im = ImageGrab.grab()
     my_screen = define_screen_window_size(session)
+    print(my_screen)
     im = ImageGrab.grab(bbox=my_screen) # X1,Y1,X2,Y2
     im.save("my_floor_diagram.png")
-    im.show()
+    #im.show()
+
+
+def plot_heatmap(query):
+    query_list = []
+    for elem in query:
+        query_list.append(list(elem))
+    
+    outfile = open('mycsv.csv', 'w')
+    outcsv = csv.writer(outfile)
+    outcsv.writerows(query_list)
+    outfile.close()
+    #sns.heatmap(query)
