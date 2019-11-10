@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import csv
 import os
+import shutil
 from reportlab.platypus import SimpleDocTemplate, Paragraph, PageBreak, Image
 from reportlab.lib.units import mm, inch
 from reportlab.lib.styles import getSampleStyleSheet
@@ -20,7 +21,7 @@ def log(application, log_level, msg):
 def pdf_generator(session):
     
     if os.path.exists('./res'):
-        os.removedirs('./res')
+        shutil.rmtree('./res', ignore_errors=True)
         os.makedirs('./res')
 
     pdf_buffer = []
@@ -38,10 +39,10 @@ def pdf_generator(session):
     pdf_buffer.append(PageBreak())
 
     take_screenshot(session)
-    #paragraph = Paragraph('Site analysis for next floor plan draw:<br /><br /><br />', pdf_style_sheet['Heading1'])
-    #pdf_buffer.append(paragraph)
-    #pdf_buffer.append(Image('./res/my_floor_diagram.png'))
-    #pdf_buffer.append(PageBreak())
+    paragraph = Paragraph('Site analysis for floor plan draw:<br /><br /><br />', pdf_style_sheet['Heading1'])
+    pdf_buffer.append(paragraph)
+    pdf_buffer.append(Image('./res/my_floor_diagram.png', width=4*200, height=2*200, kind='proportional'))
+    pdf_buffer.append(PageBreak())
 
     for ssid in session.query(Ssid).filter(Ssid.id==Measure.ssid_id).order_by(Ssid.ssid_value).all():
         paragraph_measure = Paragraph('SSID: {}'.format(ssid), pdf_style_sheet['Heading2'])
@@ -74,7 +75,6 @@ def pdf_generator(session):
         query.insert(0, ['id','x_position', 'y_position', 'rssi', 'ssid'])
         plot_heatmap(query)
 
-        #plt.figure(figsize=(10,6))
         plt.savefig('./res/{}-measure.png'.format(ssid))
         pdf_buffer.append(Image('./res/{}-measure.png'.format(ssid)))
         pdf_buffer.append(PageBreak())
@@ -114,8 +114,8 @@ def take_screenshot(session):
     #print(my_screen)
     im = ImageGrab.grab(bbox=my_screen) # X1,Y1,X2,Y2
     im.save('./res/my_floor_diagram.png')
-    im_resized = Img.open('./res/my_floor_diagram.png')
-    im_resized.save(im_resized.resize(500,420))
+    #im_resized = Img.open('./res/my_floor_diagram.png')
+    #im_resized.save(im_resized.resize(500,420))
     #im.show()
 
 
