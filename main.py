@@ -57,7 +57,6 @@ class myApplication(Widget):
             with self.canvas:
                 Color(0,0,0)
                 point_list = [touch.x, touch.y]
-                print(point_list)
                 self.point_list_figure.append(point_list)
                 Line(points=self.point_list_figure, width = 5)
                 save_draw_point_in_db(self.session, touch)
