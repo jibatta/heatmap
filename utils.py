@@ -22,8 +22,8 @@ def pdf_generator(session):
     
     if os.path.exists('./res'):
         shutil.rmtree('./res', ignore_errors=True)
-        os.makedirs('./res')
-
+    os.makedirs('./res')
+    
     pdf_buffer = []
     my_pdf = SimpleDocTemplate('heatmap_report.pdf')
     pdf_style_sheet = getSampleStyleSheet()
@@ -63,7 +63,7 @@ def pdf_generator(session):
         #SELECT DISTINCT ssid_value, channel_number FROM measure INNER JOIN ssid ON measure.ssid_id = ssid.id INNER JOIN channel ON measure.channel_id = channel.id ORDER BY ssid_value ASC;
         query = session.query(Channel, Measure, Ssid).join(Ssid, Ssid.id==Measure.ssid_id).filter(Ssid.ssid_value==str(ssid)).join(Channel, Channel.id==Measure.channel_id).all()
         channel_list = remove_repeated_values(query)
-        paragraph_channel = Paragraph('Channels detected: {}'.format(channel_list), pdf_style_sheet['Heading2'])
+        paragraph_channel = Paragraph('Channels detected: {}<br /><br /><br /><br />'.format(channel_list), pdf_style_sheet['Heading2'])
         
         pdf_buffer.append(paragraph_sec)
         pdf_buffer.append(paragraph_bssid)
@@ -75,8 +75,9 @@ def pdf_generator(session):
         query.insert(0, ['id','x_position', 'y_position', 'rssi', 'ssid'])
         plot_heatmap(query)
 
+        plt.tight_layout()
         plt.savefig('./res/{}-measure.png'.format(ssid))
-        pdf_buffer.append(Image('./res/{}-measure.png'.format(ssid)))
+        pdf_buffer.append(Image('./res/{}-measure.png'.format(ssid),width=3*200, height=1.5*200, kind='proportional'))
         pdf_buffer.append(PageBreak())
 
     my_pdf.build(pdf_buffer, onFirstPage=add_page_number, onLaterPages=add_page_number)
@@ -124,9 +125,12 @@ def plot_heatmap(query):
     for elem in query:
         query_list.append(list(elem))
     
+    plt.figure()
     outfile = open('./res/mycsv.csv', 'w')
     outcsv = csv.writer(outfile)
     outcsv.writerows(query_list)
     outfile.close()
-    df = pd.read_csv('./res/mycsv.csv', index_col=0)
-    sns.lmplot(x='x_position', y='y_position', data=df)
+    df1 = pd.read_csv('./res/mycsv.csv', index_col=0)
+    #df2 = df1[['x_position','y_position','rssi']]
+    heatmap_data = pd.pivot_table(df1, values='rssi', columns='x_position', index=['y_position'])
+    sns.heatmap(heatmap_data, cmap="RdYlBu_r", annot=True, vmin=-90, vmax=-30)

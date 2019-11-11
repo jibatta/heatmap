@@ -24,7 +24,8 @@ class myApplication(Widget):
         super(myApplication, self).__init__(**kwargs)
         #Window.fullscreen = True
 
-        self.engine = create_engine(db_path, echo=True)
+        #Change echo to True to troubleshoot
+        self.engine = create_engine(db_path, echo=False)
         self.engine.execute('PRAGMA foreign_keys = ON')
         Base.metadata.create_all(self.engine)
         Session = sessionmaker(bind=self.engine)
